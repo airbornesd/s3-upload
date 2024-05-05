@@ -1,6 +1,7 @@
 import {
   CreateBucketCommand,
   DeleteBucketCommand,
+  ListBucketsCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
 
@@ -12,16 +13,18 @@ export const s3 = new S3Client({
   },
 });
 
+export const getAllBucket = async () => {
+  const buckets = new ListBucketsCommand({});
+  const data = await s3.send(buckets);
+  return data.Buckets;
+};
+
 export const createBucket = async (bucket) => {
   const data = await s3.send(new CreateBucketCommand({ Bucket: bucket }));
   return data;
 };
 
 export const deleteBucket = async (bucket) => {
-  try {
-    const data = s3.send(new DeleteBucketCommand({ Bucket: bucket }));
-    return data;
-  } catch (error) {
-    throw new error(error.message);
-  }
+  const data = s3.send(new DeleteBucketCommand({ Bucket: bucket }));
+  return data;
 };
